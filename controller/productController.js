@@ -43,17 +43,30 @@ exports.getProducts = handleasync(async (req, res, next) => {
 
 exports.createProduct = handleasync(async (req, res, next) => {
   const picture = req.files.picture;
-  const uploadResult = await cloudinary.v2.uploader.upload(
-    picture.tempFilePath
-  );
+  let files = [];
+  if (!picture[0]) {
+    const uploadResult = await cloudinary.v2.uploader.upload(
+      picture.tempFilePath
+    );
+    files.push(uploadResult.secure_url);
+  } else {
+    let promises = await picture.map(async (pic) => {
+      const uploadResult = await cloudinary.v2.uploader.upload(
+        pic.tempFilePath
+      );
+
+      return uploadResult.secure_url;
+    });
+    files = await Promise.all(promises);
+  }
 
   const newproduct = await Products.create({
     description: req.body.description,
+    title: req.body.title,
     seller: req.user._id,
     price: req.body.price,
-    pictures: [uploadResult.secure_url],
+    pictures: files,
     categorie: req.body.categorie,
-    details: req.body.details,
     condition: req.body.condition,
   });
 
@@ -61,7 +74,6 @@ exports.createProduct = handleasync(async (req, res, next) => {
 
   res.status(201).json({
     status: "success",
-
     product,
   });
 });

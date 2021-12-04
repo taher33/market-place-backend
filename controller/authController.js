@@ -9,7 +9,7 @@ const sendMail = require("../utils/email");
 const bcrypt = require("bcryptjs");
 
 const signToken = (id) => {
-  return jwt.sign({ id }, "process.env.JWT_SECRET", {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: 24 * 3600 * 1000,
   });
 };
@@ -91,10 +91,9 @@ exports.protect = handleasync(async (req, res, next) => {
 });
 
 exports.isLogedIn = (req, res) => {
-  console.log("is loged in ");
+  console.log("login---------------");
   res.json({
     status: "success",
-    isLogedIn: true,
     user: req.user,
   });
 };

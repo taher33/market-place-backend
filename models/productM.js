@@ -6,12 +6,15 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, "must specify a description"],
     },
-
+    title: {
+      type: String,
+      required: [true, "must specify a title"],
+    },
     price: {
       type: Number,
       required: [true, "please provide a price"],
     },
-    details: { type: String },
+
     condition: {
       type: String,
       enum: ["new", "good as new", "used", "bad"],
