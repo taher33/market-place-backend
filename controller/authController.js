@@ -91,7 +91,6 @@ exports.protect = handleasync(async (req, res, next) => {
 });
 
 exports.isLogedIn = (req, res) => {
-  console.log("login---------------");
   res.json({
     status: "success",
     user: req.user,

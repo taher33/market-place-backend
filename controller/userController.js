@@ -1,4 +1,5 @@
 const User = require("../models/userM");
+const Notification = require("../models/notification");
 const appError = require("../utils/appError");
 const handleasync = require("../utils/handleAsync");
 const { findByIdAndUpdate } = require("../models/userM");
@@ -73,9 +74,20 @@ exports.getAllUsers = handleasync(async (req, res, next) => {
   const users = await User.find();
 
   res.status(200).json({
-    status: "got the users succes",
+    status: "success",
     number: await User.countDocuments(),
     result: users,
+  });
+});
+
+exports.getNotifications = handleasync(async (req, res, next) => {
+  const notifications = await Notification.find({
+    client: req.user._id,
+  });
+
+  res.status(200).json({
+    status: "success",
+    notifications,
   });
 });
 

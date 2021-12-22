@@ -11,6 +11,7 @@ const {
   follow,
   getOneUser,
   delete_everything,
+  getNotifications,
 } = require("../controller/userController");
 const { deleteOne } = require("../controller/handlerFactory");
 
@@ -42,5 +43,7 @@ router
   .patch(auth.protect, follow);
 
 router.delete("/:id", auth.protect, auth.restricTo("admin"), deleteOne(User));
+
+router.get("/notifications", auth.protect, getNotifications);
 
 module.exports = router;
