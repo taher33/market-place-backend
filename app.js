@@ -39,7 +39,7 @@ app.use(helmet());
 app.use(mongoSanitize());
 //data sanitazation against xss
 app.use(xss());
-if (process.env.NODE_ENV === "prod") app.use(morgan("dev"));
+// if (process.env.NODE_ENV === "prod") app.use(morgan("dev"));
 // limit request for the api
 const limiter = rateLimit({
   max: 500,
