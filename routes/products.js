@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../controller/authController");
+const { protect, getUserAuth } = require("../controller/authController");
 const {
   deletemany,
   getProducts,
@@ -10,7 +10,7 @@ const {
 
 router
   .route("/")
-  .get(getProducts)
+  .get(getUserAuth, getProducts)
   .post(protect, createProduct)
   // .patch(protect, likePosts)
   .delete(deletemany);

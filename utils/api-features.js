@@ -9,12 +9,19 @@ class apiFeatures {
     let newQuery = {
       ...this.queryStr,
     };
-    const exclude = ["sort", "page", "limit", "fields", "price", "rating"];
+
+    const exclude = [
+      "sort",
+      "page",
+      "limit",
+      "fields",
+      "price",
+      "rating",
+      "following",
+      "popular",
+    ];
     exclude.forEach((el) => delete newQuery[el]);
     this.query = this.query.find(newQuery);
-    // if (!newQuery.user && this.user.People_I_follow.length !== 0) {
-    //   this.query = this.query.find({ user: this.user.following });
-    // }
     return this;
   }
 
@@ -42,6 +49,14 @@ class apiFeatures {
       if (sign === "eq") this.query.find({ rating });
     }
 
+    return this;
+  }
+
+  limitToFollowings() {
+    if (this.queryStr.following && this.user) {
+      const following = this.user.People_I_follow;
+      this.query = this.query.find({ seller: { $in: following } });
+    }
     return this;
   }
 

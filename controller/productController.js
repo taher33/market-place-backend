@@ -24,7 +24,8 @@ exports.getProducts = handleasync(async (req, res, next) => {
     .limitFields()
     .sort()
     .GetPriceAndRating()
-    .pagination();
+    .pagination()
+    .limitToFollowings();
   const products = await feature.query;
 
   //haseMore for pagination in the frontend

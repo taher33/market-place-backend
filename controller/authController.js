@@ -90,6 +90,32 @@ exports.protect = handleasync(async (req, res, next) => {
   next();
 });
 
+exports.getUserAuth = handleasync(async (req, res, next) => {
+  let token;
+
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+  if (!token) {
+    return next();
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, result) => {});
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  const frechUser = await User.findById(decoded.id);
+
+  if (!frechUser) {
+    return next();
+  }
+
+  if (!frechUser.checkPassChanged(token.iat)) {
+    return next();
+  }
+  req.user = frechUser;
+  next();
+});
+
 exports.isLogedIn = (req, res) => {
   res.json({
     status: "success",
