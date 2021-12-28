@@ -76,7 +76,7 @@ app.use(express.json());
 // static serving
 app.use(express.static(path.join(__dirname, "imgs")));
 //my routes
-
+app.get("/", (req, res) => res.json({ whiteList }));
 app.use("/products", products);
 app.use("/users", users);
 // not found
