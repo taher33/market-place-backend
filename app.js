@@ -17,8 +17,8 @@ const fileUpload = require("express-fileupload");
 const app = express();
 const whiteList = [
   "http://localhost:3000",
-  "https://web-shop-seven.vercel.app/",
-  "web-shop-seven.vercel.app/",
+  "https://web-shop-seven.vercel.app",
+  "web-shop-seven.vercel.app",
 ];
 
 app.use(
