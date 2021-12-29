@@ -1,5 +1,6 @@
 const User = require("../models/userM");
 const Notification = require("../models/notification");
+const Thread = require("../models/threads");
 const appError = require("../utils/appError");
 const handleasync = require("../utils/handleAsync");
 const { findByIdAndUpdate } = require("../models/userM");
@@ -94,39 +95,46 @@ exports.getNotifications = handleasync(async (req, res, next) => {
 exports.follow = handleasync(async (req, res, next) => {
   if (!req.body.email) return next(new appError("email required"), 400);
 
-  const user = await User.findOne({ email: req.body.email });
+  const client = await User.findOne({ email: req.body.email });
 
-  if (!user) return next(new appError("user does not exist", 404));
-  if (req.user.People_I_follow.includes(user._id)) {
+  if (!client) return next(new appError("user does not exist", 404));
+
+  if (req.user.People_I_follow.includes(client._id)) {
     //removing user id from clients following list
     req.user.People_I_follow.splice(
-      req.user.People_I_follow.indexOf(user._id),
+      req.user.People_I_follow.indexOf(client._id),
       1
     );
     //removing client id from users followers list
-    user.People_that_follow_me.splice(
-      user.People_that_follow_me.indexOf(req.user._id),
+    client.People_that_follow_me.splice(
+      client.People_that_follow_me.indexOf(req.user._id),
       1
     );
-    user.save({ validateBeforeSave: false });
+    client.save({ validateBeforeSave: false });
     req.user.save({ validateBeforeSave: false });
 
     return res.status(200).json({
       status: "success",
     });
+  } else {
+    const thread = await Thread.create({
+      clients: [req.user._id, client._id],
+    });
+    client.People_that_follow_me.push(req.user._id);
+    client.threads.push(thread._id);
+    req.user.People_I_follow.push(client._id);
+    req.user.threads.push(thread._id);
+    client.save({ validateBeforeSave: false });
+    req.user.save({ validateBeforeSave: false });
   }
-
-  user.People_that_follow_me.push(req.user._id);
-  req.user.People_I_follow.push(user._id);
-  user.save({ validateBeforeSave: false });
-  req.user.save({ validateBeforeSave: false });
 
   res.status(200).json({
     status: "success",
   });
 });
-// did not add the end point for it yet
-exports.Unfriend = handleasync(async (req, res, next) => {
+
+// todo: delete this because follow fn does this also
+exports.Unfollow = handleasync(async (req, res, next) => {
   if (!req.body.id) return next(new appError("plz provide an id", 400));
 
   if (!req.user.friends.includes(req.body.id))
@@ -153,7 +161,6 @@ exports.getAllFriends = handleasync(async (req, res, next) => {
 
 exports.getOneUser = handleasync(async (req, res, next) => {
   let id = req.params.userId;
-  console.log(id);
   const user = await User.findById(id);
   if (!user) {
     return next(new appError("user does nnot exist", 404));

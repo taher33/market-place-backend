@@ -29,7 +29,7 @@ router.patch("/updatePassword", auth.protect, auth.updatePassword);
 
 router.patch("/updateMe", auth.protect, uploadUserImgs, updateMe);
 
-router.get("/one/:userId", auth.protect, getOneUser);
+router.get("/:userId", auth.protect, getOneUser);
 
 router.delete("/deleteMe", auth.protect, deleteMe);
 
