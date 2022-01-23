@@ -4,36 +4,13 @@ const Thread = require("../models/threads");
 const appError = require("../utils/appError");
 const handleasync = require("../utils/handleAsync");
 const { findByIdAndUpdate } = require("../models/userM");
-const multer = require("multer");
+const cloudinary = require("cloudinary");
 
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "imgs/users");
-  },
-  filename: (req, file, cb) => {
-    //geting the extention : jpeg and such
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `user-${req.user._id}-${Date.now()}.${ext}`);
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image")) {
-    cb(null, true);
-  } else {
-    cb(new appError("not an image", 400), false);
-  }
-};
-
-const upload = multer({
-  storage: multerStorage,
-  fileFilter: multerFilter,
-});
-
-exports.uploadUserImgs = upload.fields([
-  { name: "profileImg", maxCount: 1 },
-  { name: "cover", maxCount: 1 },
-]);
 
 const filterObj = (obj, ...allowed) => {
   const filterdObj = {};
@@ -44,13 +21,15 @@ const filterObj = (obj, ...allowed) => {
 };
 
 exports.updateMe = handleasync(async (req, res, next) => {
-  if (req.body.password || req.body.passwordConf) {
-    return next(new appError("this is not for password updates", 400));
+  const filterdBody = filterObj(req.body, "name", "email", "description");
+  if (req.files) {
+    const picture = req.files.profileImg;
+    const uploadResult = await cloudinary.v2.uploader.upload(
+      picture.tempFilePath
+    );
+    filterdBody.profileImg = uploadResult.secure_url;
   }
-  const filterdBody = filterObj(req.body, "name", "email");
 
-  if (req.files) filterdBody.profileImg = req.files.profileImg[0].filename;
-  // console.log(filterdBody);
   const user = await User.findByIdAndUpdate(req.user._id, filterdBody, {
     new: true,
     runValidators: true,

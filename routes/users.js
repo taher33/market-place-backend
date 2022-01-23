@@ -27,7 +27,7 @@ router.patch("/resetPassword/:token", auth.resetPassword);
 
 router.patch("/updatePassword", auth.protect, auth.updatePassword);
 
-router.patch("/updateMe", auth.protect, uploadUserImgs, updateMe);
+router.patch("/updateMe", auth.protect, updateMe);
 
 router.get("/:userId", auth.protect, getOneUser);
 

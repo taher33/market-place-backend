@@ -4,19 +4,12 @@ const Products = require("../models/productM");
 const appError = require("../utils/appError");
 const { deleteOne } = require("./handlerFactory");
 const cloudinary = require("cloudinary");
-const streamifier = require("streamifier");
 
 cloudinary.config({
-  cloud_name: "taher66",
-  api_key: "669926646787936",
-  api_secret: "QCpCCF2dYdgEqUPrC864DoGW58I",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// const upload = multer();
-
-// exports.uploadPostImg = upload.single("picture");
-
-const fs = require("fs");
 
 exports.getProducts = handleasync(async (req, res, next) => {
   const feature = new apiFeatures(Products.find(), req.query, req.user)
