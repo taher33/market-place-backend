@@ -12,6 +12,7 @@ const {
   getOneUser,
   delete_everything,
   getNotifications,
+  readMessages,
 } = require("../controller/userController");
 const { deleteOne } = require("../controller/handlerFactory");
 
@@ -26,6 +27,8 @@ router.route("/").get(getAllUsers).post(auth.signUp);
 router.post("/forgotPassword", auth.forgotPass);
 
 router.patch("/resetPassword/:token", auth.resetPassword);
+
+router.patch("/messages", auth.protect, readMessages);
 
 router.patch("/updatePassword", auth.protect, auth.updatePassword);
 

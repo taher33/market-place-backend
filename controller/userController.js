@@ -1,5 +1,6 @@
 const User = require("../models/userM");
 const Notification = require("../models/notification");
+const Messages = require("../models/messages");
 const Thread = require("../models/threads");
 const appError = require("../utils/appError");
 const handleasync = require("../utils/handleAsync");
@@ -68,6 +69,25 @@ exports.getNotifications = handleasync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     notifications,
+  });
+});
+
+exports.readMessages = handleasync(async (req, res, next) => {
+  console.log(req.body);
+  if (!!req.body.messages.lenght)
+    return next(new appError("must specify messages", 400));
+
+  const messagesIds = req.body.messages.map((el) => el._id);
+
+  const messages = await Messages.updateMany(
+    {
+      _id: { $in: messagesIds },
+    },
+    { read: true }
+  );
+
+  res.status(200).json({
+    status: "success",
   });
 });
 
