@@ -13,10 +13,13 @@ const {
   delete_everything,
   getNotifications,
   readMessages,
+  getThreads,
 } = require("../controller/userController");
 const { deleteOne } = require("../controller/handlerFactory");
 
 router.get("/checkLogin", auth.protect, auth.isLogedIn);
+
+router.get("/threads", auth.protect, getThreads);
 
 router.post("/login", auth.login);
 

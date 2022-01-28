@@ -64,7 +64,7 @@ exports.getAllUsers = handleasync(async (req, res, next) => {
 exports.getNotifications = handleasync(async (req, res, next) => {
   const notifications = await Notification.find({
     client: req.user._id,
-  });
+  }).populate("creator");
 
   res.status(200).json({
     status: "success",
@@ -72,8 +72,41 @@ exports.getNotifications = handleasync(async (req, res, next) => {
   });
 });
 
+exports.getThreads = handleasync(async (req, res, next) => {
+  const threads = await Thread.find({ _id: { $in: req.user.threads } })
+    .populate("clients")
+    .populate("messages");
+
+  if (!threads) return next(new appError("no threads found", 404));
+
+  const newThread = threads.map((el) => {
+    let client =
+      `${el.clients[0]._id}` !== `${req.user._id}`
+        ? el.clients[0]
+        : el.clients[1];
+
+    let unreadMsg = el.messages
+      .filter((el) => !el.read)
+      .filter((el) => `${el.sender}` !== `${req.user._id}`).length;
+
+    let lastmsg = el.messages.filter(
+      (el) => `${el.sender}` !== `${req.user._id}`
+    );
+
+    return {
+      client,
+      lastMessage: lastmsg[lastmsg.length - 1],
+      unreadMsg,
+      _id: el._id,
+    };
+  });
+  res.status(200).json({
+    status: "success",
+    newThread,
+  });
+});
+
 exports.readMessages = handleasync(async (req, res, next) => {
-  console.log(req.body);
   if (!!req.body.messages.lenght)
     return next(new appError("must specify messages", 400));
 
