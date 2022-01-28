@@ -13,6 +13,7 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: [true, "provide a body to your notification"],
   },
+  read: { type: Boolean, default: false },
   creator: { type: mongoose.SchemaTypes.ObjectId, ref: "User" },
   client: { type: mongoose.SchemaTypes.ObjectId, ref: "User" },
   createdAt: {
