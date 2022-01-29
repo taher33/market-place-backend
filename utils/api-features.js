@@ -21,6 +21,7 @@ class apiFeatures {
       "popular",
       "new",
     ];
+
     exclude.forEach((el) => delete newQuery[el]);
     this.query = this.query.find(newQuery);
     return this;

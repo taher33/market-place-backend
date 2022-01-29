@@ -22,7 +22,15 @@ const productSchema = new mongoose.Schema(
     },
     categorie: {
       type: String,
-      enum: ["electronics", "games", "beauty", "cloths", "books", "sports"],
+      enum: [
+        "electronics",
+        "games",
+        "beauty",
+        "cloths",
+        "books",
+        "sports",
+        "automobile",
+      ],
       required: [true, "please provide a categorie for this listing"],
     },
     seller: {
