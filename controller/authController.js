@@ -97,6 +97,7 @@ exports.getUserAuth = handleasync(async (req, res, next) => {
     token = req.cookies.jwt;
   }
   if (!token) {
+    console.log("no token");
     return next();
   }
 

@@ -22,16 +22,17 @@ exports.getProducts = handleasync(async (req, res, next) => {
   const products = await feature.query;
 
   //haseMore for pagination in the frontend
-  let haseMore = false;
+  let nextPage;
   if (products.length === 11) {
-    haseMore = true;
+    let page = req.query.page * 1;
+    page++;
+    nextPage = page;
     products.pop();
   }
-
   res.json({
     res: products.length,
     products,
-    haseMore,
+    nextPage,
   });
 });
 
