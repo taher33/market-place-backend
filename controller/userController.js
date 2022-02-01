@@ -97,9 +97,12 @@ exports.getThreads = handleasync(async (req, res, next) => {
       client,
       lastMessage: lastmsg[lastmsg.length - 1],
       unreadMsg,
+      productThread: el.productThread,
       _id: el._id,
+      product: el.product,
     };
   });
+
   res.status(200).json({
     status: "success",
     newThread,
