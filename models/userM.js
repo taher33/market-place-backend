@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validate.isEmail, "please provide valid email"],
   },
+  description: {
+    type: String,
+    minlength: 10,
+    maxlength: 400,
+  },
   password: {
     type: String,
     required: true,
@@ -42,7 +47,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
   },
   updatedAt: {
-    // still needs work here
     type: Date,
     default: Date.now(),
   },
@@ -55,12 +59,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// userSchema.pre("save", async function (next) {
-//   // if (!this.isModified("password")) return next();
-//   this.password = await bcrypt.hash(this.password, 14);
-//   next();
-// });
-
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
   // some times the DB is slower then the jwt token so we take one seconde to not run into problemes in login
@@ -72,11 +70,6 @@ userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
 });
-
-// userSchema.pre(/^find/, function (next) {
-//   this.populate("posts");
-//   next();
-// });
 
 userSchema.methods.checkPassChanged = async function (tokenDate) {
   if (this.passwordChanged) {

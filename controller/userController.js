@@ -75,7 +75,8 @@ exports.getNotifications = handleasync(async (req, res, next) => {
 exports.getThreads = handleasync(async (req, res, next) => {
   const threads = await Thread.find({ _id: { $in: req.user.threads } })
     .populate("clients")
-    .populate("messages");
+    .populate("messages")
+    .populate("product");
 
   if (!threads) return next(new appError("no threads found", 404));
 
