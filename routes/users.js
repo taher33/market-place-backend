@@ -14,12 +14,15 @@ const {
   getNotifications,
   readMessages,
   getThreads,
+  getOneThread,
 } = require("../controller/userController");
 const { deleteOne } = require("../controller/handlerFactory");
 
 router.get("/checkLogin", auth.protect, auth.isLogedIn);
 
 router.get("/threads", auth.protect, getThreads);
+
+router.get("/threads/one", auth.protect, getOneThread);
 
 router.post("/login", auth.login);
 

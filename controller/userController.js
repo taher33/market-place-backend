@@ -72,6 +72,36 @@ exports.getNotifications = handleasync(async (req, res, next) => {
   });
 });
 
+exports.getOneThread = handleasync(async (req, res, next) => {
+  if (!req.body.thread_id) return next(new appError("provide thread id", 400));
+
+  const thread = await Thread.findById(req.body.thread_id)
+    .populate("clients")
+    .populate("messages")
+    .populate("product");
+
+  if (!req.body.thread_id)
+    return next(new appError("no thread with this id was found", 404));
+
+  let client =
+    `${thread.clients[0]._id}` !== `${req.user._id}`
+      ? thread.clients[0]
+      : thread.clients[1];
+
+  let lastmsg = thread.messages.filter(
+    (thread) => `${thread.sender}` !== `${req.user._id}`
+  );
+  const newthread = {
+    client,
+    lastmsg,
+    _id: thread._id,
+    messages: thread.messages,
+  };
+  res.json({
+    newthread,
+  });
+});
+
 exports.getThreads = handleasync(async (req, res, next) => {
   const threads = await Thread.find({ _id: { $in: req.user.threads } })
     .populate("clients")
@@ -101,6 +131,7 @@ exports.getThreads = handleasync(async (req, res, next) => {
       productThread: el.productThread,
       _id: el._id,
       product: el.product,
+      messages: el.messages,
     };
   });
 
