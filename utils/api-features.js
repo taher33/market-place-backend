@@ -62,6 +62,25 @@ class apiFeatures {
     return this;
   }
 
+  // textSearch() {
+  //   if (this.queryStr.search) {
+  //     this.query = this.query.aggregate({
+  //       $search: {
+  //         index: "test",
+  //         text: {
+  //           query: "nike",
+  //           path: {
+  //             wildcard: "*",
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     console.log(this.query.then((res) => console.log(res)));
+  //   }
+  //   return this;
+  // }
+
   sort() {
     if (this.queryStr.sort) {
       const sortBy = this.queryStr.sort.split(".").join(" ");

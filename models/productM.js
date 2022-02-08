@@ -9,6 +9,7 @@ const productSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, "must specify a title"],
+      index: true,
     },
     price: {
       type: Number,
@@ -57,6 +58,8 @@ const productSchema = new mongoose.Schema(
     },
   }
 );
+
+// productSchema.index({ title: "text" });
 
 productSchema.pre("save", function (next) {
   this.modifiedAt = Date.now();

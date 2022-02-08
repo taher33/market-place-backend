@@ -19,6 +19,7 @@ exports.getProducts = handleasync(async (req, res, next) => {
     .GetPriceAndRating()
     .pagination()
     .limitToFollowings();
+
   const products = await feature.query;
 
   //haseMore for pagination in the frontend
@@ -70,6 +71,29 @@ exports.createProduct = handleasync(async (req, res, next) => {
   res.status(201).json({
     status: "success",
     product,
+  });
+});
+
+exports.searchProducts = handleasync(async (req, res, next) => {
+  const searchParam = req.query.search;
+  if (!searchParam) return next(new appError("must provide search param", 400));
+
+  const products = await Products.aggregate([
+    {
+      $search: {
+        index: "test",
+        text: {
+          query: searchParam,
+          path: {
+            wildcard: "*",
+          },
+        },
+      },
+    },
+  ]);
+
+  res.json({
+    products,
   });
 });
 

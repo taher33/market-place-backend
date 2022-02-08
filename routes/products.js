@@ -6,6 +6,7 @@ const {
   getProducts,
   createProduct,
   singleProduct,
+  searchProducts,
 } = require("../controller/productController");
 
 router
@@ -14,6 +15,8 @@ router
   .post(protect, createProduct)
   // .patch(protect, likePosts)
   .delete(deletemany);
+
+router.route("/search").get(searchProducts);
 
 router.route("/singleProduct").get(singleProduct);
 
